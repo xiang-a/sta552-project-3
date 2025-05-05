@@ -1,0 +1,1441 @@
+---
+title: "A Comprehensive Overview of Classification Algorithms in the Prediction of Vehicle Accidents"
+author: "Alice Xiang"
+date: "2025-05-04"
+output: html_document
+---
+
+```{=html}
+
+<style type="text/css">
+
+/* Cascading Style Sheets (CSS) is a stylesheet language used to describe the presentation of a document written in HTML or XML. it is a simple mechanism for adding style (e.g., fonts, colors, spacing) to Web documents. */
+
+h1.title {  /* Title - font specifications of the report title */
+  font-size: 24px;
+  font-weight:bold;
+  color: DarkRed;
+  text-align: center;
+  font-family: "Gill Sans", sans-serif;
+}
+h4.author { /* Header 4 - font specifications for authors  */
+  font-size: 20px;
+  font-family: system-ui;
+  color: DarkRed;
+  text-align: center;
+}
+h4.date { /* Header 4 - font specifications for the date  */
+  font-size: 18px;
+  font-family: system-ui;
+  color: DarkBlue;
+  text-align: center;
+}
+h1 { /* Header 1 - font specifications for level 1 section title  */
+    font-size: 22px;
+    font-family: system-ui;
+    font-weight:bold;
+    color: navy;
+    text-align: left;
+}
+h2 { /* Header 2 - font specifications for level 2 section title */
+    font-size: 20px;
+    font-weight:bold;
+    font-family: "Times New Roman", Times, serif;
+    color: navy;
+    text-align: left;
+}
+
+h3 { /* Header 3 - font specifications of level 3 section title  */
+    font-size: 18px;
+    font-weight:bold;
+    font-family: "Times New Roman", Times, serif;
+    color: navy;
+    text-align: left;
+}
+
+h4 { /* Header 4 - font specifications of level 4 section title  */
+    font-size: 16px;
+    font-family: "Times New Roman", Times, serif;
+    color: darkred;
+    text-align: left;
+}
+
+body { background-color:white; }
+
+.highlightme { background-color:yellow; }
+
+p { background-color:white; }
+
+</style>
+```
+
+# Introduction: 
+
+Classification algorithms are a subset of supervised learning where the model attempts to accurately predict the correct label of a given observation. When the model tries to predict a discrete outcome, classification algorithms are utilized for decision-making and pattern identification. 
+
+In this document, we will go through an overview of various classification techniques, including the following: 
+
+1. Logistic Regression
+2. Regularized Regression
+3. Support Vector Machines
+4. Decision Trees 
+5. BAGGING and Random Forest
+
+These methods will all be used on the same training and test datasets for prediction in order to evaluate them against each other through their resulting ROC curves and AUC values.
+
+The dataset (https://www.kaggle.com/datasets/denkuznetz/traffic-accident-prediction) contains data meant to predict the occurrence of a vehicular accident based on a collection of features that may be related to the probability of a vehicular accident, listed below: 
+
+Weather (categorical): clear, rainy, foggy, snowy, stormy
+
+Road_Type (categorical): Highway, city road, rural road, mountain road
+
+Time_of_Day (categorical): Morning, Afternoon, Evening, Night
+
+Traffic_Density (discrete): 0 (low density), 1 (moderate density), 2 (high density)
+
+Speed_Limit (numeric): Posted speed limit of road
+
+Number of Vehicles (discrete): Number of vehicles involved in the accident
+
+Driver_Alcohol (binary): 0 (driver consumed alcohol), 1 (driver did not consume alcohol)
+
+Accident_Severity (categorical): Low, Moderate, High
+
+Road_Condition (categorical): Dry, Wet, Icy, Under Construction
+
+Vehicle_Type (categorical): Car, Truck, Motorcycle, Bus
+
+Driver_Age (numeric): Age of driver
+
+Driver_Experience (numeric): Years of experience of driver
+
+Road_Light_Condition (categorical): Daylight, Artificial Light, No Light
+
+Accident (binary): 0 (no accident), 1 (had accident)
+
+# Methodology:
+
+## Classification Algorithms
+
+This document will utilize the following classification algorithms to create predictive models on whether or not an accident will occur based on a collection of factors. 
+
+### Logistic Regression
+
+Logistic regression models the relationship between a binary dependent variable to one or more independent variables, using a logistic function to predict the probability of the dependent variable belonging to a particular category. They are often utilized because of their simplicity, efficiency, and interpretability. The model is created to predict the log odds of a given event based on parameter estimates of given predictors. It is often used in predictive analysis and machine learning contexts as well as in more traditional statistical association analysis applications. 
+
+### Regularized Regression Techniques
+
+Regularized regression techniques are an expansion on more traditional regression methods by introducing penalty terms to control the complexity of the model and account for issues with overfitting. They can be effective for situations with many predictors or when multicollinearity is present between features. 
+
+We will explore three of the most common forms of regularized regression, including Ridge Regression, LASSO, and Elastic Net Regression techniques. Each introduces penalties to the regression model in a slightly different way and may be more or less advantageous in certain modeling situations. 
+
+### Support Vector Machines
+
+SVM is another technique that can be used in classification contexts, and is a distribution-free method. In SVM, classes are separated in a feature space and SVM draws a hyperplane, or decision boundary, to maximize the margin between parallel hyperplanes while minimizing misclassification errors. SVM can handle both linear and nonlinear class boundaries, using the kernel trick to handle non-linear classification. The most common kernel transformations are radial kernel and polynomial kernel. We will explore a linear, radial, and polynomial methods to create SVM classification models. 
+
+### Decision Trees
+
+Decision or Classification trees are created in order to create subsets of the data that are as homogeneous as possible. They can be valued for their interpretability, but risk overfitting. Therefore, trees can be "pruned" to control for their complexity, with two major recommended approaches being 1) choosing a value that minimizes cross-validation error and 2) applying the 1-SE rule. We will create both an unpruned and pruned classification trees according to these rules and compare their performance. 
+
+### BAGGING
+
+BAGGING, or Bootstrap Aggregation, is an ensemble learning technique meant to improve the stability and accuracy of various machine learning techniques. It operates on the principle of reducing variance by voting over multiple models created through bootstrap resamples of the original data. We will construct a bagged classification model. 
+
+### Random Forest
+
+Random forest is another ensemble leraning technique that constructs multiple decision trees instead of just one and aggregates across their results. Based on BAGGING and similar techniques, it can mitigate the effects of overfitting and improve the accuracy of the model. They can be particularly effective in the cases of higher dimensional data, nonlinear relationships, and interactions without requiring extensive feature engineering beforehand.
+
+## Model Performance Measures
+
+All of the classification models created will be assessed through ROC curves and their corresponding AUC values. 
+
+### ROC Curves
+
+ROC Curves are a graphical technique used to measure the performance of a binary classification model by plotting the true positive rate against the false positive rate at various classification thresholds. 
+
+### AUC
+
+The AUC, or area under the curve, is a number that quantifies the performance of the ROC in a single value by approximating the area under the constructed curve between 0 and 1. The closer the AUC is to 1, the better the performance of the model. 
+
+# EDA
+
+To begin, we look at a summary of the dataset.
+
+```{r setup, include=FALSE}
+
+library(mice)
+library(tidyverse)
+library(knitr)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+library(GGally)
+library(plotly)
+library(VIM)
+library(caret)
+library(MASS)
+library(reshape2)
+library(glmnet)
+library(cluster)
+library(car)
+library(pROC)
+library(glmnet)
+library(pander)
+library(kernlab)
+library(rpart) 
+library(rpart.plot)
+library(mlbench)
+library(ipred)
+library(randomForest)
+
+accident <- read.csv("C:/Users/qinfa/OneDrive/Desktop/alice's laptop/school/STA552/dataset_traffic_accident_prediction1.csv")
+
+mod.accident <- accident
+
+mod.accident$Weather[mod.accident$Weather == ""] <- NA
+mod.accident$Road_Type[mod.accident$Road_Type == ""] <- NA
+mod.accident$Time_of_Day[mod.accident$Time_of_Day == ""] <- NA
+mod.accident$Accident_Severity[mod.accident$Accident_Severity == ""] <- NA
+mod.accident$Road_Condition[mod.accident$Road_Condition == ""] <- NA
+mod.accident$Vehicle_Type[mod.accident$Vehicle_Type == ""] <- NA
+mod.accident$Road_Light_Condition[mod.accident$Road_Light_Condition == ""] <- NA
+
+mod.accident <- mod.accident %>% mutate(
+  Weather = as.factor(Weather),
+  Road_Type = as.factor(Road_Type),
+  Traffic_Density = as.factor(Traffic_Density),
+  Driver_Alcohol = as.factor(Driver_Alcohol),
+  Time_of_Day = as.factor(Time_of_Day),
+  Accident_Severity = as.factor(Accident_Severity),
+  Road_Condition = as.factor(Road_Condition),
+  Vehicle_Type = as.factor(Vehicle_Type),
+  Road_Light_Condition = as.factor(Road_Light_Condition),
+  Accident = as.factor(Accident)
+)
+
+summary(mod.accident)
+
+```
+
+Truthfully, with over half of the observations of including at least one missing value, best practice is to not proceed with imputation and model building. However, for illustrative purposes, we will continue by imputing the missing values through multiple imputation. 
+
+```{r, echo = FALSE}
+init <- mice(mod.accident, maxit = 0)  # Check initial imputation setup
+init$method                    # View default imputation methods
+
+data <- mod.accident
+meth <- init$method
+imp.pas <- mice(data, meth = meth, m = 5, seed = 123,
+                print = FALSE)
+mod.accident <- complete(imp.pas)
+
+summary(mod.accident)
+colSums(is.na(mod.accident))
+```
+
+## Individual Feature Distributions 
+
+After handling the missing data, we can take a look at the distributions of the numeric predictors.
+
+```{r, echo = FALSE}
+h1 <- ggplot(mod.accident, aes(x = Speed_Limit)) + geom_histogram(color = "#32373B", fill = "#F4B860", bins = 10)
+h2 <- ggplot(mod.accident, aes(x = Number_of_Vehicles)) + geom_histogram(color = "#32373B", fill = "#F4D6CC", bins = 10)
+h3 <- ggplot(mod.accident, aes(x = Driver_Age)) + geom_histogram(color = "#32373B", fill = "#F4D6CC", bins = 10)
+h4 <- ggplot(mod.accident, aes(x = Driver_Experience)) + geom_histogram(color = "#32373B", fill = "#C83E4D", bins = 10)
+
+grid.arrange(h1, h2, h3, h4, nrow = 2, ncol = 2)
+```
+
+Due to the apparent sparseness of observations with higher values for the number of vehicles, we will take a closer look to see if there is a meaningful way to rebin this into a categorical variable. 
+
+```{r, echo = FALSE}
+mod.accident %>% group_by(Number_of_Vehicles) %>% summarize(n = n())
+```
+
+It appears that 1, 2, 3, 4, and 5+ cars would be an intuitive way of recategorizing the information in this feature, so we will proceed by recategorizing it. 
+
+```{r, echo = FALSE}
+mod.accident <- mod.accident %>% mutate(
+  Number_of_Vehicles = case_when(
+    Number_of_Vehicles == 1 ~ "1",
+    Number_of_Vehicles == 2 ~ "2",
+    Number_of_Vehicles == 3 ~ "3",
+    Number_of_Vehicles == 4 ~ "4",
+    .default = "5+"
+  )
+)
+
+mod.accident <- mod.accident %>% mutate(
+  Number_of_Vehicles = as.factor(Number_of_Vehicles)
+)
+
+summary(mod.accident$Number_of_Vehicles)
+
+```
+The classification methods we will consider are robust to predictor normality, so will not transform the remaining predictors further for simplicity and interpretability.
+
+# Relationships between Features
+
+To continue, we will visualize the relationships between the features and the binary response variable of Accident. 
+
+```{r, echo = FALSE}
+g1 <- ggplot(mod.accident) +
+  aes(x = Speed_Limit, y = Accident, fill = Accident) +
+  geom_boxplot(na.rm = TRUE, color = "#32373B") + 
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position="top") +
+  xlab("Speed Limit") + 
+  ylab("Accident (Yes/No)") + scale_fill_manual(values = c("#C83E4D", "#F4B860"))
+g2 <- ggplot(mod.accident) +
+  aes(x = Driver_Age, y = Accident, fill = Accident) +
+  geom_boxplot(na.rm = TRUE, color = "#32373B") + 
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position="top") +
+  xlab("Driver Age") + 
+  ylab("Accident (Yes/No)") + scale_fill_manual(values = c("#C83E4D", "#F4B860"))
+g3 <- ggplot(mod.accident) +
+  aes(x = Driver_Experience, y = Accident, fill = Accident) +
+  geom_boxplot(na.rm = TRUE, color = "#32373B") + 
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position="top") +
+  xlab("Driver Experience (Years)") + 
+  ylab("Accident (Yes/No)") + scale_fill_manual(values = c("#C83E4D", "#F4B860"))
+
+
+grid.arrange(g1, g2, g3, ncol = 2, nrow = 2)
+
+```
+
+Just looking at the box plots, there don't appear to be any obvious differences for any of these three continuous variables in across the groups of observations that had or did not have a vehicular accident. 
+
+```{r, echo = FALSE}
+par(mfrow = c(1,3))
+mosaicplot(Accident ~ Weather, data=mod.accident,col=c("#820329", "#C83E4D", "#F39237", "#F4B860", "#F4D6CC", "#A1B0AB", "#407076", "#4A5859"), main="Accident vs. Weather", las = 1)
+mosaicplot(Accident ~ Road_Type, data=mod.accident,col=c("#820329", "#C83E4D", "#F39237", "#F4B860", "#F4D6CC", "#A1B0AB", "#407076", "#4A5859"), main="Accident vs. Road Type", las = 1)
+mosaicplot(Accident ~ Time_of_Day, data=mod.accident,col=c("#820329", "#C83E4D", "#F39237", "#F4B860", "#F4D6CC", "#A1B0AB", "#407076", "#4A5859"), main="Accident vs. Time of Day", las = 1)
+mosaicplot(Accident ~ Number_of_Vehicles, data=mod.accident,col=c("#820329", "#C83E4D", "#F39237", "#F4B860", "#F4D6CC", "#A1B0AB", "#407076", "#4A5859"), main="Accident vs. Number of Vehicles", las = 1)
+mosaicplot(Accident ~ Driver_Alcohol, data=mod.accident,col=c("#820329", "#C83E4D", "#F39237", "#F4B860", "#F4D6CC", "#A1B0AB", "#407076", "#4A5859"), main="Accident vs. Driver Alcohol", las = 1)
+mosaicplot(Accident ~ Accident_Severity, data=mod.accident,col=c("#820329", "#C83E4D", "#F39237", "#F4B860", "#F4D6CC", "#A1B0AB", "#407076", "#4A5859"), main="Accident vs. Accident Severity", las = 1)
+mosaicplot(Accident ~ Road_Condition, data=mod.accident,col=c("#820329", "#C83E4D", "#F39237", "#F4B860", "#F4D6CC", "#A1B0AB", "#407076", "#4A5859"), main="Accident vs. Road Condition", las = 1)
+mosaicplot(Accident ~ Vehicle_Type, data=mod.accident,col=c("#820329", "#C83E4D", "#F39237", "#F4B860", "#F4D6CC", "#A1B0AB", "#407076", "#4A5859"), main="Accident vs. Vehicle Type", las = 1)
+mosaicplot(Accident ~ Road_Light_Condition, data=mod.accident,col=c("#820329", "#C83E4D", "#F39237", "#F4B860", "#F4D6CC", "#A1B0AB", "#407076", "#4A5859"), main="Accident vs. Road Lighting Condition", las = 1)
+```
+
+Looking across the mosaic plots of the response against the categorical features in the dataset, we do see some differences in distributions for the different values of the binary response, most obviously in the features Weather and Road_Condition. On the other hand, Road_Lighting_Conditions and Driver_Alcohol seem relatively homogeneous over the different values of Accident.
+
+# Research Question: 
+
+What classification model performs best in the prediction of Accident based on the other features in the model?
+
+# Logistic Regression: 
+
+We begin by fitting a full logistic regression model and looking at its parameter estimates. 
+
+```{r, echo = FALSE}
+glm.full.model = glm(Accident ~ ., family = binomial, data = mod.accident)
+
+kable(summary(glm.full.model)$coef, caption = "Vehicle Accident Logistic Full Main Effects Model Parameter Estimates")
+
+```
+
+Many of the p-values given for these predictors seem nonsignificant. As such, we will also conduct stepwise feature selection to construct a reduced model.
+
+```{r, echo = FALSE, results = FALSE}
+glm.step.model <- step(glm.full.model, direction = "both")
+```
+
+The parameter estimates for the stepwise reduced model are given below. 
+
+```{r, echo = FALSE}
+kable(summary(glm.step.model)$coef, caption = "Vehicle Accident Logistic Stepwise Main Effects Model Parameter Estimates")
+```
+
+
+Using the R caret package, we conduct five-fold cross-validation to get an initial look at the accuracy estimates for both models. 
+
+```{r, echo = FALSE}
+set.seed(1)
+fitControl <- trainControl(method = "cv", number = 5)
+
+full.cv <- train(Accident ~., 
+                  data = mod.accident, 
+                  method = "glm",
+                  trControl = fitControl)
+full.cv
+
+step.cv <- train(Accident ~ Weather + Road_Type,
+                  data = mod.accident, 
+                  method = "glm",
+                  trControl = fitControl)
+step.cv
+
+```
+
+We can also construct confusion matrices and examine the sensitivity and specificity of both logistic regression models. 
+
+```{r, echo = FALSE}
+full.cm <- confusionMatrix.train(full.cv)$table
+step.cm <- confusionMatrix.train(step.cv)$table
+
+
+specsens <- function(x) {
+  return(c(x[1,1]/(x[1,1]+x[2,1]), x[2,2]/(x[2,2]+x[1,2])))
+}
+
+full.ss <- specsens(full.cm)
+step.ss <- specsens(step.cm)
+
+s.s.table = rbind(full.ss, step.ss)
+rownames(s.s.table) = c("Full Model", "Stepwise Model")
+colnames(s.s.table) = c("Specificity", "Sensitivity")
+kable(s.s.table, caption = "Specificity and Sensitivity Comparisons of Main Effect Logistic Candidate Models")
+```
+
+
+We note that the sensitivity for both models is calculated to be very, very low. We proceed by creating the training and test datasets that will be used for the rest of this analysis and look at the five-fold CV ROC curves created based on the training dataset as well as the summary statistics of the AUC values for each of these curves. 
+
+```{r, echo = FALSE, message = FALSE}
+par(mfrow = c(1,2))
+
+nn = dim(mod.accident)[1]
+
+set.seed(123)
+train.id = sample(1:nn, round(nn*0.8), replace = FALSE) 
+
+trainDat = mod.accident[train.id,]
+testDat = mod.accident[-train.id,]
+
+# each fold has 672/5 = 134 observations
+##
+AUC.vec = rep(0,5)
+color=c("#002642","#840032","#432534", "#c44900", "#0b7a75")
+
+
+## main effects full model
+
+for(i in 1:5){
+  ID = ((i-1)*134+1):(i*134)
+  valid = as.data.frame(trainDat[ID,])
+  train = as.data.frame(trainDat[-ID,])
+  ##
+  logit.model = glm.full.model
+  newdata = valid %>% dplyr::select(-(Accident))
+  pred.prob.train = predict.glm(logit.model, newdata, type = "response")
+  ## we next use library {pROC}
+  ## to calculate AUC
+  prediction = pred.prob.train
+  category = valid$Accident == 1
+  ROCobj <- roc(category, prediction)
+  AUC.vec[i] = round(auc(ROCobj),4)
+  if(i==1){
+    plot((1-ROCobj$specificities),ROCobj$sensitivities,
+         type="l",
+         main="Lang. Full Main Effect",
+         col=color[i], 
+         xlab="1-specificty",
+         ylab="sensitivity",
+         lwd=1, 
+         lty=1)
+        segments(0,0,1,1, lty=2, col="red")
+    } else{
+    lines((1-ROCobj$specificities),ROCobj$sensitivities, col=color[i], lwd=1)
+    }
+}
+
+glm.full.AUC <- AUC.vec
+
+## main effects stepwise model
+for(i in 1:5){
+  ID = ((i-1)*134+1):(i*134)
+  valid = as.data.frame(trainDat[ID,])
+  train = as.data.frame(trainDat[-ID,])
+  ##
+  logit.model = glm.step.model
+  newdata = valid %>% dplyr::select(-(Accident))
+  pred.prob.train = predict.glm(logit.model, newdata, type = "response")
+  ## we next use library {pROC}
+  ## to calculate AUC
+  prediction = pred.prob.train
+  category = valid$Accident == 1
+  ROCobj <- roc(category, prediction)
+  AUC.vec[i] = round(auc(ROCobj),4)
+  if(i==1){
+    plot((1-ROCobj$specificities),ROCobj$sensitivities,
+         type="l",
+         main="Lang. Stepwise Main Effect",
+         col=color[i], 
+         xlab="1-specificty",
+         ylab="sensitivity",
+         lwd=1, 
+         lty=1)
+        segments(0,0,1,1, lty=2, col="red")
+    } else{
+    lines((1-ROCobj$specificities),ROCobj$sensitivities, col=color[i], lwd=1)
+    }
+}
+
+step.reduced.AUC <- AUC.vec
+
+```
+
+```{r echo = FALSE}
+AUCvectors <- rbind(summary(glm.full.AUC), summary(step.reduced.AUC))
+row.names(AUCvectors) = c("Full Main Effect Model", "Stepwise Main Effect Model")
+kable(AUCvectors, caption ="5-fold Cross-Validated AUC for Vehicle Accident candidate models")
+```
+
+
+We will continue by finding the optimal cut-off probability on the test dataset and the AUC values for both models. 
+
+```{r echo = FALSE, message = FALSE}
+par(mfrow = c(1,2))
+
+
+## Full
+
+logit.model = glm.full.model
+###
+newdata = testDat %>% dplyr::select(-Accident)
+pred.prob.train = predict.glm(logit.model, newdata, type = "response")
+## we next use library {pROC}
+## to calculate AUC
+prediction = pred.prob.train
+category = testDat$Accident == 1
+ROCobj <- roc(category, prediction)
+## 
+sen = ROCobj$sensitivities
+spe = ROCobj$specificities
+logit.full.sen = sen
+logit.full.spe = spe
+SenMinusSpe = abs(sen-spe)
+minID = which(SenMinusSpe == min(SenMinusSpe))
+cut.off.prob = ROCobj$thresholds
+auc.full.logit = auc(ROCobj)
+###
+plot((1-spe), sen, main = "Full Main Effects Model",
+     type = "l",
+     ylab = "sensitivity",
+     xlab = "1 - specificity")
+segments(0, 0, 1, 1, lty = 2, col = "red", lwd = 2)
+segments((1-spe[minID]), 1-spe[minID], (1-spe[minID]), sen[minID], col="purple")
+points((1-spe[minID]), sen[minID], pch=19, col = "darkred", cex = 1.7)
+points((1-spe[minID]), sen[minID], pch=19, col = "gold", cex = 1.2)
+text(0.4, sen[minID]+0.15, paste("(",round(spe[minID],5), ", ", round(sen[minID],5), ")"), cex = 0.8, col = "blue")
+
+## Step
+
+logit.model = glm.step.model
+###
+newdata = testDat %>% dplyr::select(-Accident)
+pred.prob.train = predict.glm(logit.model, newdata, type = "response")
+## we next use library {pROC}
+## to calculate AUC
+prediction = pred.prob.train
+category = testDat$Accident == 1
+ROCobj <- roc(category, prediction)
+## 
+sen = ROCobj$sensitivities
+spe = ROCobj$specificities
+logit.step.sen = sen
+logit.step.spe = spe
+SenMinusSpe = abs(sen-spe)
+minID = which(SenMinusSpe == min(SenMinusSpe))
+cut.off.prob = ROCobj$thresholds
+auc.step.logit = auc(ROCobj)
+###
+plot((1-spe), sen, main = "Vehicle Accident Stepwise Main Effect Model",
+     type = "l",
+     ylab = "sensitivity",
+     xlab = "1 - specificity")
+segments(0, 0, 1, 1, lty = 2, col = "red", lwd = 2)
+segments((1-spe[minID]), 1-spe[minID], (1-spe[minID]), sen[minID], col="purple")
+points((1-spe[minID]), sen[minID], pch=19, col = "darkred", cex = 1.7)
+points((1-spe[minID]), sen[minID], pch=19, col = "gold", cex = 1.2)
+text(0.4, sen[minID]+0.15, paste("(",round(spe[minID],5), ", ", round(sen[minID],5), ")"), cex = 0.8, col = "blue")
+
+kable(data.frame(Model = c("Full Main Effects Logistic Model", "Stepwise Reduced Main Effects Logistic Model"), AUC = c(auc.full.logit, auc.step.logit)))
+```
+
+
+The following graphs give different measures of predictive model performance including the accuracy, sensitivity, and specificity at different cut-off probabilities. 
+
+
+```{r, echo = FALSE}
+# Full
+
+newdata = testDat %>% dplyr::select(-Accident)
+glm_pred <- predict(object = glm.full.model, newdata, type = "response")
+
+# now the indices 
+t_seq <- seq(0.1,0.9,by = 0.1)
+index_mat <- matrix(ncol = 4, nrow = length(t_seq))
+
+counter <- 0 
+for (treshold in t_seq ) {
+        counter <- counter + 1 
+       conf_mat <- table(testDat$Accident, factor(glm_pred>treshold, levels = c(FALSE, TRUE))) 
+       sen <- conf_mat[2,2]/sum(conf_mat[2,])
+       spec <- conf_mat[1,1]/sum(conf_mat[1,])
+       accuracy <- (conf_mat[1,1]+conf_mat[2,2])/sum(conf_mat)
+       index_mat[counter,] <-  c(treshold,sen,spec,accuracy  )
+}
+
+index_df <- data.frame(index_mat)
+colnames(index_df) <- c("threshold","sensitivity","specificity","accuracy")
+
+ggplot(data = index_df) +
+        geom_line(aes(x = threshold, y = sensitivity, color = "Sensitivity")  ) +
+        geom_point(aes(x = threshold, y = sensitivity, color = "Sensitivity")  ) +
+        geom_line(aes(x = threshold, y = specificity, color = "Specificity") ) +
+        geom_point(aes(x = threshold, y = specificity, color = "Specificity") ) + 
+        geom_line(aes(x = threshold, y = accuracy, color = "accuracy"), alpha = 0.5) + 
+        geom_point(aes(x = threshold, y = accuracy, color = "accuracy"), alpha = 0.5) + 
+        scale_x_continuous(name="Threshold", limits=c(0.1, 0.9), breaks = t_seq) + 
+        scale_y_continuous(name = "Index", limits = c(0,1), breaks = seq(0,1,0.1)) +
+        scale_color_brewer(palette = "Set1")+ 
+        ggtitle("Prediction Measures for Vehicle Accident Full Logistic Model") 
+
+# Stepwise
+newdata = testDat %>% dplyr::select(-Accident)
+glm_pred <- predict(object = glm.step.model, newdata, type = "response")
+
+# now the indices 
+t_seq <- seq(0.1,0.9,by = 0.1)
+index_mat <- matrix(ncol = 4, nrow = length(t_seq))
+
+counter <- 0 
+for (treshold in t_seq ) {
+        counter <- counter + 1 
+       conf_mat <- table(testDat$Accident, factor(glm_pred>treshold, levels = c(FALSE, TRUE))) 
+       sen <- conf_mat[2,2]/sum(conf_mat[2,])
+       spec <- conf_mat[1,1]/sum(conf_mat[1,])
+       accuracy <- (conf_mat[1,1]+conf_mat[2,2])/sum(conf_mat)
+       index_mat[counter,] <-  c(treshold,sen,spec,accuracy  )
+}
+
+index_df <- data.frame(index_mat)
+colnames(index_df) <- c("threshold","sensitivity","specificity","accuracy")
+
+ggplot(data = index_df) +
+        geom_line(aes(x = threshold, y = sensitivity, color = "Sensitivity")  ) +
+        geom_point(aes(x = threshold, y = sensitivity, color = "Sensitivity")  ) +
+        geom_line(aes(x = threshold, y = specificity, color = "Specificity") ) +
+        geom_point(aes(x = threshold, y = specificity, color = "Specificity") ) + 
+        geom_line(aes(x = threshold, y = accuracy, color = "accuracy"), alpha = 0.5) + 
+        geom_point(aes(x = threshold, y = accuracy, color = "accuracy"), alpha = 0.5) + 
+        scale_x_continuous(name="Threshold", limits=c(0.1, 0.9), breaks = t_seq) + 
+        scale_y_continuous(name = "Index", limits = c(0,1), breaks = seq(0,1,0.1)) +
+        scale_color_brewer(palette = "Set1")+ 
+        ggtitle("Prediction Measures for Stepwise Vehicle Accident Logistic Model") 
+
+
+```
+
+
+# Regularized Logistic Regression 
+
+Moving onto regularized logistic regression, we create LASSO, Ridge, and Elastic Net classification models and find their optimal cut-off probabilities. 
+
+```{r, echo = FALSE}
+# Convert the response variable to a binary numeric variable
+
+X <- model.matrix(Accident ~ ., mod.accident)[,-1]  
+mod.accident$Accident <- ifelse(mod.accident$Accident == 1, 1, 0)
+y <- mod.accident$Accident
+
+X_train <- X[train.id, ]
+X_test <- X[-train.id, ]
+y_train <- y[train.id]
+y_test <- y[-train.id]
+
+####################
+# Fit LASSO model
+####################
+lasso_model <- glmnet(X_train, y_train, family = "binomial", alpha = 1)
+
+# Cross-validation to find the optimal lambda
+cv_lasso <- cv.glmnet(X_train, y_train, family = "binomial", alpha = 1)
+
+# Optimal lambda
+lambda_lasso <- cv_lasso$lambda.min
+
+# Refit the model with the optimal lambda
+lasso_model_opt <- glmnet(X_train, y_train, 
+                          family = "binomial", 
+                          alpha = 1, 
+                          lambda = lambda_lasso)
+
+####################
+# Fit Ridge model
+####################
+ridge_model <- glmnet(X_train, y_train, family = "binomial", alpha = 0)
+
+# Cross-validation to find the optimal lambda
+cv_ridge <- cv.glmnet(X_train, y_train, family = "binomial", alpha = 0)
+
+# Optimal lambda
+lambda_ridge <- cv_ridge$lambda.min
+
+# Refit the model with the optimal lambda
+ridge_model_opt <- glmnet(X_train, y_train, 
+                          family = "binomial", 
+                          alpha = 0, 
+                          lambda = lambda_ridge)
+
+
+############################################
+# Fit Elastic Net model (e.g., alpha = 0.5)
+############################################
+elastic_model <- glmnet(X_train, y_train, family = "binomial", alpha = 0.5)
+
+# Cross-validation to find the optimal lambda
+cv_elastic <- cv.glmnet(X_train, y_train, family = "binomial", alpha = 0.5)
+
+# Optimal lambda
+lambda_elastic <- cv_elastic$lambda.min
+
+# Refit the model with the optimal lambda
+elastic_model_opt <- glmnet(X_train, y_train, 
+                            family = "binomial", 
+                            alpha = 0.5, 
+                            lambda = lambda_elastic)
+
+#############################
+# Predict on the test set: type = "class" uses the default 
+# cut-off probability to be 0.5.
+predict_lasso <- predict(lasso_model_opt, newx = X_test, type = "response")
+predict_ridge <- predict(ridge_model_opt, newx = X_test, type = "response")
+predict_elastic <- predict(elastic_model_opt, newx = X_test, type = "response")
+
+###########################################
+## Optimal cutoff probability determination
+seq.cut <- seq(0,1, length=50)
+# y is a vector of 0 and 1
+acc.lasso <- NULL
+acc.ridge <- NULL
+acc.elastic <- NULL
+for (i in 1:length(seq.cut)){
+   predy.lasso <- ifelse(predict_lasso >seq.cut[i], 1, 0)
+   predy.ridge<- ifelse(predict_ridge >seq.cut[i], 1, 0)
+   predy.elastic<- ifelse(predict_elastic >seq.cut[i], 1, 0)
+   ##
+   acc.lasso[i] <- mean(y_test  == predy.lasso)
+   acc.ridge[i] <- mean(y_test == predy.ridge)
+   acc.elastic[i] <- mean(y_test  == predy.elastic)
+}
+## optimal cut-off: if the maximum accuracy occurs at multiple
+## cut-off probabilities, the average of these cutoff probabilities
+## will be defined as the optimal cutoff probability
+opt.cut.lasso <- mean(seq.cut[which(acc.lasso==max(acc.lasso))])
+opt.cut.ridge<- mean(seq.cut[which(acc.ridge==max(acc.ridge))])
+opt.cut.elastic <- mean(seq.cut[which(acc.elastic==max(acc.elastic))])
+##
+acc.data <- data.frame(prob = rep(seq.cut,3), 
+                       acc=c(acc.lasso, acc.ridge, acc.elastic), 
+                       group = c(rep("lasso",50), rep("ridge",50), rep("elastic",50)))
+
+##
+gg.acc <- ggplot(data = acc.data, aes(x=prob, y = acc, color = group)) +
+  geom_line() +
+  annotate("text", x = 0.6, y = 0.45, 
+           label = paste("LASSO cutoff: ", round(opt.cut.lasso,5), "Accuracy: ", round(max(acc.lasso),5), 
+                         "\nRidge cutoff: ", round(opt.cut.ridge,5), "Accuracy: ", round(max(acc.ridge),5), 
+                         "\nElastic cutoff: ", round(opt.cut.elastic,5), "Accuracy: ", round(max(acc.elastic),5)), 
+           size = 3, 
+           color = "navy") +
+  ggtitle("Cut-off Probability vs Accuracy") +
+  labs(x = "cut-off Probability", 
+       y = "accuracy", color = "Group") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+##
+ggplotly(gg.acc)
+
+```
+
+
+Using this optimal cut off probability, we can find certain performance measures and present them below. 
+
+```{r, echo = FALSE}
+
+#######################################
+## using the optimal cutoff probability to predict labels
+## 
+pred.lab.lasso <- ifelse(predict_lasso >opt.cut.lasso, 1, 0)
+pred.lab.ridge<- ifelse(predict_ridge >opt.cut.ridge, 1, 0)
+pred.lab.elastic<- ifelse(predict_elastic >opt.cut.elastic, 1, 0)
+
+
+#################################
+# Convert predictions to factors
+pred.lab.lasso.fct <- as.factor(pred.lab.lasso)
+pred.lab.ridge.fct <- as.factor(pred.lab.ridge)
+pred.lab.elastic.fct <- as.factor(pred.lab.elastic)
+
+# Convert actual values to factors
+y_test <- as.factor(y_test)
+
+# Confusion Matrix and Metrics
+confusion.lasso <- confusionMatrix(pred.lab.lasso.fct, y_test)
+confusion.ridge<- confusionMatrix(pred.lab.ridge.fct, y_test)
+confusion.elastic <- confusionMatrix(pred.lab.elastic.fct, y_test)
+
+## Commonly used performance measured
+PerfMeasures <- cbind(lasso = confusion.lasso$byClass, 
+                     ridge = confusion.ridge$byClass, 
+                     elastic = confusion.elastic$byClass)
+pander(PerfMeasures)
+```
+
+Finally, using the test data, once again we will calculate the AUC values and create ROC curves to compare them. 
+
+```{r, echo = FALSE, warning = FALSE}
+# library(pROC)
+# Predicted probabilities for each model: type = "response"
+prob_lasso <- predict(lasso_model_opt, newx = X_test, type = "response")
+prob_ridge <- predict(ridge_model_opt, newx = X_test, type = "response")
+prob_elastic <- predict(elastic_model_opt, newx = X_test, type = "response")
+
+# Compute ROC curves: roc object contains a lot information including
+# sensitivity, specificity, AUC, etc.
+roc_lasso <- roc(y_test, prob_lasso)
+roc_ridge <- roc(y_test, prob_ridge)
+roc_elastic <- roc(y_test, prob_elastic)
+
+# Compute AUC values
+auc_lasso <- auc(roc_lasso)
+auc_ridge <- auc(roc_ridge)
+auc_elastic <- auc(roc_elastic)
+
+## LASSO
+sen.lasso <- roc_lasso$sensitivities
+spe.lasso <- roc_lasso$specificities
+auc.lasso <- roc_lasso$auc
+
+## Ridge
+sen.ridge <- roc_ridge$sensitivities
+spe.ridge <- roc_ridge$specificities
+auc.ridge <- roc_ridge$auc
+
+## Elastic Net
+sen.elastic <- roc_elastic$sensitivities
+spe.elastic <- roc_elastic$specificities
+auc.elastic <- roc_elastic$auc
+
+## Plotting the ROC curves: three colors - green, orange, and purple
+
+plot(1-spe.lasso, sen.lasso, 
+     type = "l",
+     col = "green", 
+     xlim=c(0,1),
+     xlab = "1 - specificity",
+     ylab = "sensitivity",
+     main = "ROC Curves for LASSO, Ridge, and Elastic Net")
+lines(1-spe.ridge, sen.ridge, col = "orange")
+lines(1-spe.elastic, sen.elastic, col = "purple")
+abline(0,1, type = "l", lty = 2, col = "steelblue", lwd = 1)
+
+# Add legend
+legend("bottomright", legend = c(paste("LASSO (AUC =", round(auc_lasso, 3), ")"),
+                                paste("Ridge (AUC =", round(auc_ridge, 3), ")"),
+                                paste("Elastic Net (AUC =", round(auc_elastic, 3), ")")),
+       col = c("green", "orange", "purple"), lty = 1, cex = 0.8, bty = "n")
+```
+We can see that of the regularized regression models, Elastic Net regression performed the best of the three methods. However, all three have values only slightly over 0.5, which indicates a correct prediction only about 50% of the time. 
+
+# SVM
+
+Moving onto SVM, we create three candidate models, one linear and two non-linear. Using the R library caret, we find the best value of C for each model and the corresponding accuracies. 
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, include = FALSE}
+svm.data <- trainDat
+svm.test <- testDat
+svm.data$Accident <- ifelse(trainDat$Accident == 1, "YesAccident", "NoAccident")
+svm.data$Accident <- as.factor(svm.data$Accident)
+svm.test$Accident <- ifelse(testDat$Accident == 1, "YesAccident", "NoAccident")
+svm.test$Accident <- as.factor(svm.test$Accident)
+
+# 5 fold CV
+train_control <- trainControl(method = "cv", number = 5, classProbs = TRUE)
+
+svm1 <- train(Accident ~., data = svm.data, method = "svmLinear", trControl = train_control,  preProcess = c("center","scale"), metric = "ROC", tuneGrid = expand.grid(C = seq(0, 2, length = 20)))
+#View the model
+svm1
+svm1$bestTune
+
+res1<-as_tibble(svm1$results[which.min(svm1$results[,2]),])
+
+svm2 <- train(Accident ~., data = svm.data, method = "svmRadial", trControl = train_control, preProcess = c("center","scale"), tuneLength = 10)
+#View the model
+svm2
+svm2$bestTune
+
+res2<-as_tibble(svm2$results[which.min(svm2$results[,2]),])
+
+svm3 <- train(Accident ~., data = svm.data, method = "svmPoly", trControl = train_control, preProcess = c("center","scale"), tuneLength = 4)
+#View the model
+svm3
+svm3$bestTune
+
+res3<-as_tibble(svm3$results[which.min(svm3$results[,2]),])
+```
+
+```{r, echo = FALSE}
+df<-tibble(Model=c('SVM Linear w/ choice of cost','SVM Radial','SVM Poly'),Accuracy= c(res1$Accuracy,res2$Accuracy,res3$Accuracy))
+df %>% arrange(Accuracy)
+```
+
+We also construct the confusion matrices and ROC curves for each of the SVM models. 
+
+```{r, echo = FALSE, warning = FALSE}
+# svm 1
+svm1.pred <- predict(svm1, svm.test)
+finalmatrix<-data.matrix(svm1.pred, rownames.force = F)
+test<-table(pred = svm1.pred, true = svm.test[,14])
+confusionMatrix(test)
+
+gc_prob <- predict(svm1, svm.test, type = "prob")
+gc_pROC <- roc(response = svm.test$Accident, predictor = gc_prob[, "YesAccident"])
+plot(gc_pROC)
+svm1.spe <- gc_pROC$specificities
+svm1.sen <- gc_pROC$sensitivities
+svm1.auc <- gc_pROC$auc
+
+# svm 2
+svm2.pred <- predict(svm2, svm.test)
+finalmatrix<-data.matrix(svm1.pred, rownames.force = F)
+test<-table(pred = svm2.pred, true = svm.test[,14])
+confusionMatrix(test)
+
+gc_prob <- predict(svm2, svm.test, type = "prob")
+gc_pROC <- roc(response = svm.test$Accident, predictor = gc_prob[, "YesAccident"])
+plot(gc_pROC)
+svm2.spe <- gc_pROC$specificities
+svm2.sen <- gc_pROC$sensitivities
+svm2.auc <- gc_pROC$auc
+
+# svm 3
+svm3.pred <- predict(svm3, svm.test)
+finalmatrix<-data.matrix(svm1.pred, rownames.force = F)
+test<-table(pred = svm3.pred, true = svm.test[,14])
+confusionMatrix(test)
+
+gc_prob <- predict(svm3, svm.test, type = "prob")
+gc_pROC <- roc(response = svm.test$Accident, predictor = gc_prob[, "YesAccident"])
+plot(gc_pROC)
+svm3.spe <- gc_pROC$specificities
+svm3.sen <- gc_pROC$sensitivities
+svm3.auc <- gc_pROC$auc
+
+svm.AUC<-kable(data.frame(Model=c('SVM Linear w/ choice of cost','SVM Radial','SVM Poly'),AUC= c(svm1.auc, svm2.auc, svm3.auc)))
+svm.AUC
+```
+
+# CART
+
+We construct three classification trees, one unpruned, one pruned through the 1-SE rule, and one pruned by the minimum CV error. We can begin by plotting the unpruned tree, as follows. 
+
+```{r, echo = FALSE}
+# Build the initial classification tree
+tree.model <- rpart(Accident ~ ., 
+                    data = trainDat,
+                    method = "class",   # classification tree
+                    parms = list(split = "gini",  # Using Gini index
+                                 # FN cost = 1, FP cost = 0.5
+                                 loss = matrix(c(0, 0.5, 1, 0), nrow = 2)  
+                                 ),
+                    control = rpart.control(minsplit = 15,  # Min 15 obs to split
+                                           minbucket = 5,   # Min 7 obs in leaf
+                                           # Complexity parameter
+                                           cp = 0.001, # complex parameter
+                                           maxdepth = 5))   # Max tree depth
+
+rpart.plot(tree.model, 
+           extra = 104, # check the help document for more information
+           # color palette is a sequential color scheme that blends green (G) to blue (Bu)
+           box.palette = "GnBu",  
+           branch.lty = 1, 
+           shadow.col = "gray", 
+           nn = TRUE)
+
+
+```
+
+The pruned tree by minimum CV and 1-SE are represented as follows.
+
+```{r, echo = FALSE}
+pander(tree.model$cptable)
+# plotcp(tree.model)
+
+min.cp <- tree.model$cptable[which.min(tree.model$cptable[,"xerror"]),"CP"]
+
+# Prune the tree using the optimal cp
+pruned.tree.1SE <- prune(tree.model, cp = 0.005941)  
+pruned.tree.min <- prune(tree.model, cp = min.cp)
+
+# Visualize the pruned tree
+rpart.plot(pruned.tree.1SE, 
+           extra = 104, # check the help document for more information
+           # color palette is a sequential color scheme that blends green (G) to blue (Bu)
+           box.palette = "GnBu",  
+           branch.lty = 1, 
+           shadow.col = "gray", 
+           nn = TRUE)
+
+```
+
+```{r, echo = FALSE}
+rpart.plot(pruned.tree.min, 
+           extra = 104, # check the help document for more information
+           # color palette is a sequential color scheme that blends green (G) to blue (Bu)
+           box.palette = "GnBu",  
+           branch.lty = 1, 
+           shadow.col = "gray", 
+           nn = TRUE)
+
+```
+
+The ROC curves and AUC values of each of the classification trees are shown below. 
+
+```{r, echo = FALSE, warning = FALSE}
+# Make predictions on the test set
+pred.label.tree <- predict(tree.model, testDat, type = "class")
+pred.prob.tree <- predict(tree.model, testDat, type = "prob")[,2]
+
+pred.label.1SE <- predict(pruned.tree.1SE, testDat, type = "class") # default cutoff 0.5
+pred.prob.1SE <- predict(pruned.tree.1SE, testDat, type = "prob")[,2]
+##
+pred.label.min <- predict(pruned.tree.min, testDat, type = "class") # default cutoff 0.5
+pred.prob.min <- predict(pruned.tree.min, testDat, type = "prob")[,2]
+
+# Confusion matrix
+#conf.matrix <- confusionMatrix(pred.label, test.data$Accident, positive = 1)
+#print(conf.matrix)
+
+########################
+###  logistic regression
+logit.fit <- glm.full.model
+AIC.logit <- step(logit.fit, direction = "both", trace = 0)
+pred.logit <- predict(AIC.logit, testDat, type = "response")
+
+# ROC curve and AUC
+roc.tree.1SE <- roc(testDat$Accident, pred.prob.1SE)
+roc.tree.min <- roc(testDat$Accident, pred.prob.min)
+roc.tree <- roc(testDat$Accident, pred.prob.tree)
+
+##
+### Sen-Spe
+tree.1SE.sen <- roc.tree.1SE$sensitivities
+tree.1SE.spe <- roc.tree.1SE$specificities
+#
+tree.min.sen <- roc.tree.min$sensitivities
+tree.min.spe <- roc.tree.min$specificities
+#
+tree.sen <- roc.tree$sensitivities
+tree.spe <- roc.tree$specificities
+## AUC
+auc.tree.1SE <- roc.tree.1SE$auc
+auc.tree.min <- roc.tree.min$auc
+auc.tree <- roc.tree$auc
+###
+plot(1-tree.spe, tree.sen,  
+     xlab = "1 - specificity",
+     ylab = "sensitivity",
+     col = "darkred",
+     type = "l",
+     lty = 1,
+     lwd = 1,
+     main = "ROC: CART")
+lines(1-tree.1SE.spe, tree.1SE.sen, 
+      col = "blue",
+      lty = 1,
+      lwd = 1)
+lines(1-tree.min.spe, tree.min.sen,      
+      col = "orange",
+      lty = 1,
+      lwd = 1)
+abline(0,1, col = "skyblue3", lty = 2, lwd = 2)
+legend("bottomright", c("Full Tree Model", "Tree 1SE", "Tree Min"),
+       lty = c(1,1,1), lwd = rep(1,3),
+       col = c("red", "blue", "orange"),
+       bty="n",cex = 0.8)
+## annotation - AUC
+text(0.8, 0.46, paste("Full Tree AUC: ", round(auc.tree,4)), cex = 0.8)
+text(0.8, 0.4, paste("Tree 1SE AUC: ", round(auc.tree.1SE,4)), cex = 0.8)
+text(0.8, 0.34, paste("Tree Min AUC: ", round(auc.tree.min,4)), cex = 0.8)
+
+```
+
+# BAGGING
+
+We begin constructing our bagged model by finding the best tuned hyperparameters. 
+
+```{r, echo = FALSE}
+bag.train <- trainDat
+bag.train$Accident <- as.factor(bag.train$Accident)
+
+bag.test <- testDat
+bag.test$Accident <- as.factor(bag.test$Accident)
+
+# Create a grid of hyperparameter combinations
+hyper.grid <- expand.grid(
+  nbagg = c(25, 50, 100),
+  minsplit = c(5, 10, 20),
+  maxdepth = c(5, 10, 20),
+  cp = c(0.01, 0.001)
+)
+# Initialize a results data frame
+results <- data.frame() # store values of tuned hyperparameters
+best.accuracy <- 0      # store accuracy
+best.params <- list()   # store best values of hyperparameter
+
+# Loop through each hyperparameter combination
+for(i in 1:nrow(hyper.grid)) {
+  # Get current hyperparameters
+  params <- hyper.grid[i, ]
+  
+  # Set rpart control parameters
+  rpart.control <- rpart.control(
+    minsplit = params$minsplit,
+    maxdepth = params$maxdepth,
+    cp = params$cp
+  )
+  
+  # Train bagging model
+  bag.model <- bagging(
+    Accident ~ .,
+    data = bag.train,
+    nbagg = params$nbagg,
+    coob = TRUE,
+    control = rpart.control
+  )
+  
+  # Make predictions: default cut-off 0.5
+  preds <- predict(bag.model, newdata = bag.test)
+  
+  # Calculate accuracy
+  cm <- confusionMatrix(preds, bag.test$Accident)
+  accuracy <- cm$overall["Accuracy"]
+  
+  # Store results
+  results <- rbind(results, data.frame(
+    nbagg = params$nbagg,
+    minsplit = params$minsplit,
+    maxdepth = params$maxdepth,
+    cp = params$cp,
+    Accuracy = accuracy
+  ))
+  
+  # Update best parameters if current model is better
+  if(accuracy > best.accuracy) {
+    best.accuracy <- accuracy
+    best.params <- params
+  }
+  
+  # Print progress
+  #cat("Completed", i, "of", nrow(hyper.grid), "combinations\n")
+}
+pander(best.params)
+```
+
+With these hyperparameters, we construct the BAGGED model and examine its confusion matrix.
+
+```{r, echo = FALSE}
+# Set rpart control with best parameters
+best.control <- rpart.control(
+  minsplit = best.params$minsplit,
+  maxdepth = best.params$maxdepth,
+  cp = best.params$cp
+)
+
+# Train final model
+final.bag.model <- bagging(
+  Accident ~ .,
+  data = bag.train,
+  nbagg = best.params$nbagg,
+  coob = TRUE,
+  control = best.control
+)
+
+# Evaluate on test set
+final.preds <- predict(final.bag.model, newdata = bag.test)
+final.cm <- confusionMatrix(final.preds, bag.test$Accident)
+final.cm$table
+
+```
+
+Finally, we conduct prediction on the test set and construct the ROC curve and find the AUC value. 
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+# Prediction with bagged model
+pred.prob.bagg <- predict(final.bag.model, newdata = bag.test, type = "prob")[,2]
+##
+# ROC object
+roc.bagg <- roc(bag.test$Accident, pred.prob.bagg)
+##
+##
+### Sen-Spe
+bagg.sen <- roc.bagg$sensitivities
+bagg.spe <- roc.bagg$specificities
+
+## AUC
+auc.bagg <- roc.bagg$auc
+
+###
+plot(1-bagg.spe, bagg.sen,  
+     xlab = "1 - specificity",
+     ylab = "sensitivity",
+     col = "darkred",
+     type = "l",
+     lty = 1,
+     lwd = 1,
+     main = "ROC: Classification Models")
+abline(0,1, col = "skyblue3", lty = 2, lwd = 2)
+legend("bottomright", c("Bagged Model"),
+       lty = c(1,1,1), lwd = rep(1,3),
+       col = c("darkred"),
+       bty="n",cex = 0.8)
+## annotation - AUC
+text(0.8, 0.4, paste("Bagg AUC: ", round(auc.bagg,4)), cex = 0.8)
+
+```
+
+# Random Forest
+
+Once again, we find the best hyperparameters for our Random Forest model and then examine the confusion matrix and accuracy estimates.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+# cross-validation setting
+k = 5
+train.size <- dim(svm.data)[1]  # training data size
+fold.size <- floor(train.size/k)  # fold size
+
+##
+tune.grid <- expand.grid(
+  mtry = c(2, 3, 4, 5),
+  ntree = c(100, 300, 500),
+  nodesize = c(1, 3, 5, 10),
+  maxnodes = c(5, 10, 20, NULL)
+)
+### store hyperparameters and avg of cv AUC
+results <- data.frame()
+best.auc <- 0.5         # place-holder of AUC, 0.5 = random guess
+best.hyp.params <- list()   # update the hyperparameter list according to the best auc
+
+##
+for (i in 1:nrow(tune.grid)){
+  current.tune.params <- tune.grid[i, ]  # subset of DATA FRAME!! 
+  cv.auc <- rep(0,k)
+  ##
+  for (j in 1:k){
+      cv.id <- (1 + (j-1)*fold.size):(j*fold.size)
+      cv.train <- svm.data[-cv.id, ]
+      cv.valid <- svm.data[cv.id, ]
+      ##
+       rf.cv <- randomForest(
+                   Accident ~ .,
+                   data = svm.data,
+                   mtry = current.tune.params$mtry,
+                   ntree = current.tune.params$ntree,
+                   nodesize = current.tune.params$nodesize,
+                   maxnodes = current.tune.params$maxnodes)
+       ##
+       prob.cv <- predict(rf.cv, cv.valid, type = "prob")[, "YesAccident"]
+       cv.auc[j] <- auc(roc(cv.valid$Accident, prob.cv))
+      }
+      ##
+      # Average RMSE across folds
+      avg.auc <- mean(cv.auc)  
+      ##
+      # Store results: the data frame defined to store combinations of hyperparameters
+      # and the resulting mean RMSEs from cross-validation
+      results <- rbind(results, data.frame(
+                   mtry = current.tune.params$mtry,
+                   ntree = current.tune.params$ntree,
+                   nodesize = current.tune.params$nodesize,
+                   maxnodes = current.tune.params$maxnodes,
+                   auc = avg.auc))
+  
+     # Update best parameters if current model is better
+     if(avg.auc > best.auc) {
+           best.auc <- avg.auc
+           best.hyp.params <- current.tune.params }
+    
+}
+pander(data.frame(cbind(best.hyp.params,best.auc)))    # resulting tuned hyperparameters
+
+##
+final.rf.cls <- randomForest(
+      Accident ~ .,
+      data = svm.data,
+      ntree = best.hyp.params$ntree,
+      mtry = best.hyp.params$mtry,
+      nodesize = best.hyp.params$nodesize,
+      maxnodes = current.tune.params$maxnodes,
+      importance = TRUE
+     )
+
+test.pred <- predict(final.rf.cls, svm.test)
+test.prob <- predict(final.rf.cls, svm.test, type = "prob")
+rf.roc <- roc(svm.test$Accident, test.prob[, "YesAccident"])
+test.auc <- auc(rf.roc)
+confusionMatrix(test.pred, svm.test$Accident)
+test.auc
+```
+
+The variable importance is given in the below plots. 
+
+```{r, echo = FALSE}
+# Variable Importance
+varImpPlot(final.rf.cls, pch = 19, main = "Variable Importance of RF Classification" )
+```
+
+Finally, we construct an ROC curve and find the AUC for the random forest model as well. 
+
+```{r, echo = FALSE, warning = FALSE}
+
+roc.rf <- roc(svm.test$Accident, test.prob[, "YesAccident"])
+
+rf.sen <- roc.rf$sensitivities
+rf.spe <- roc.rf$specificities
+
+## AUC
+
+auc.rf <- roc.rf$auc
+###
+###
+plot(1-rf.spe, rf.sen,  
+     xlab = "1 - specificity",
+     ylab = "sensitivity",
+     col = "darkred",
+     type = "l",
+     lty = 1,
+     lwd = 1,
+     main = "ROC: Random Forest")
+abline(0,1, col = "skyblue3", lty = 2, lwd = 2)
+legend("bottomright", c("Random Forest"),
+       lty = c(1,1,1), lwd = rep(1,3),
+       col = c("darkred"),
+       bty="n",cex = 0.8)
+## annotation - AUC
+text(0.8, 0.28, paste("Forest AUC: ", round(auc.rf,4)), cex = 0.8)
+
+```
+
+# All ROC Curves
+
+Finally, we will compile all of the results from the above classification models into one plot of all the ROC curves as well as their AUC values. 
+
+```{r, echo = FALSE}
+plot(1-logit.full.spe, logit.full.sen,  
+     xlab = "1 - specificity",
+     ylab = "sensitivity",
+     col = "red",
+     type = "l",
+     lty = 1,
+     lwd = 1,
+     main = "ROC: Classification Models")
+lines(1-logit.step.spe, logit.step.sen, 
+      col = "orange",
+      lty = 1,
+      lwd = 1)
+lines(1-spe.lasso, sen.lasso,      
+      col = "yellow",
+      lty = 1,
+      lwd = 1)
+lines(1-spe.ridge, sen.ridge,      
+      col = "yellowgreen",
+      lty = 1,
+      lwd = 1)
+lines(1-spe.elastic, sen.elastic,      
+      col = "darkgreen",
+      lty = 1,
+      lwd = 1)
+lines(1-svm1.spe, svm1.sen,      
+      col = "green",
+      lty = 1,
+      lwd = 1)
+lines(1-svm2.spe, svm2.sen,      
+      col = "cyan",
+      lty = 1,
+      lwd = 1)
+lines(1-svm3.spe, svm3.sen,      
+      col = "lightblue",
+      lty = 1,
+      lwd = 1)
+lines(1-tree.spe, tree.sen,      
+      col = "blue",
+      lty = 1,
+      lwd = 1)
+lines(1-tree.1SE.spe, tree.1SE.sen,      
+      col = "darkblue",
+      lty = 1,
+      lwd = 1)
+lines(1-tree.min.spe, tree.min.sen,      
+      col = "purple4",
+      lty = 1,
+      lwd = 1)
+lines(1-bagg.spe, bagg.sen,      
+      col = "purple",
+      lty = 1,
+      lwd = 1)
+lines(1-rf.spe, rf.sen,      
+      col = "pink",
+      lty = 1,
+      lwd = 1)
+abline(0,1, col = "grey", lty = 2, lwd = 2)
+legend("bottomright", c("Full Logistic", "Stepwise Logistic", "LASSO", "Ridge", "Elastic", "SVM Linear", "SVM Radial", "SVM Poly", "Full Tree", "Pruned Tree (1-SE)", "Pruned Tree (Min CV Error)", "BAGGING", "Random Forest"),
+       lty = c(1,1,1), lwd = rep(1,13),
+       col = c("red", "orange", "yellow", "yellowgreen", "darkgreen", "green", "cyan", "lightblue", "blue", "darkblue", "purple4", "purple", "pink"),
+       bty="n",cex = 0.5)
+## annotation - AUC
+text(0.06, 0.9, paste("Full Logistic AUC: ", round(auc.full.logit,4)), cex = 0.5)
+text(0.07, 0.86, paste("Step Logistic AUC: ", round(auc.step.logit,4)), cex = 0.5)
+text(0.05, 0.82, paste("LASSO AUC: ", round(auc_lasso,4)), cex = 0.5)
+text(0.05, 0.78, paste("Ridge AUC: ", round(auc_ridge,4)), cex = 0.5)
+text(0.05, 0.74, paste("Elastic AUC: ", round(auc_elastic,4)), cex = 0.5)
+text(0.07, 0.70, paste("SVM Linear AUC: ", round(svm1.auc,4)), cex = 0.5)
+text(0.07, 0.66, paste("SVM Radial AUC: ", round(svm2.auc,4)), cex = 0.5)
+text(0.07, 0.62, paste("SVM Poly AUC: ", round(svm3.auc,4)), cex = 0.5)
+text(0.05, 0.58, paste("Full Tree AUC: ", round(auc.tree,4)), cex = 0.5)
+text(0.07, 0.54, paste("Pruned Tree (1-SE) AUC: ", round(auc.tree.1SE,4)), cex = 0.5)
+text(0.1, 0.50, paste("Prune Tree (Min CV Error) AUC: ", round(auc.tree.min,4)), cex = 0.5)
+text(0.05, 0.46, paste("BAGGING AUC: ", round(auc.bagg,4)), cex = 0.5)
+text(0.07, 0.42, paste("Random Forest AUC: ", round(auc.rf,4)), cex = 0.5)
+```
+
+Looking at this graph, we note that most of the models performed relatively similarly. Logistic regression, when considering both the main effects and stepwise model, performed quite a bit better than the other classification models in terms of AUC. The next best performing model was the Elastic Net and BAGGED models. However, just looking at this graph, we see that the performance of all these models was overall poor. Only about 50% of the predictions were correct for most of the models. 
+
+# Numerically Compare All AUC Values 
+
+We can also create a table of all of the AUC values, ordering it in descending order to find which had the highest AUC values.
+
+```{r, echo = FALSE}
+AUCvectors <- rbind(auc.full.logit, auc.step.logit, auc_lasso, auc_ridge, auc_elastic, svm1.auc, svm2.auc, svm3.auc, auc.tree, auc.tree.1SE, auc.tree.min, auc.bagg, auc.rf)
+models <- c("Full Logit Model", "Stepwise Logit Model", "LASSO Model", "Ridge Model", "Elastic Model", "SVM Linear", "SVM Radial", "SVM Poly", "Full Tree", "Pruned Tree (1-SE)", "Pruned Tree (Min CV Error)", "BAGGING", "Random Forest")
+
+AUCvec <- data.frame(models, AUCvectors)
+AUCvec <- AUCvec %>% arrange(desc(AUCvectors))
+
+kable(AUCvec, caption ="AUC Values of Candidate Classification Models (Descending)", row.names = FALSE)
+```
+
+The logistic models performed the best of all candidate models. Therefore, out of the classification models considered, we would likely recommend logistic modeling -- it is the simplest, quite efficient to implement, and of the models being considered, also probably the easiest to interpret. However, we notice that none of the models performed particularly well. 
+
+This may be because of imbalance in the response variable Accident. When we take a closer look at the distribution, we note that the variable is imbalanced, with Accident = 0 having more than double the number of observations than Accident = 1. 
+
+```{r, echo = FALSE}
+mod.accident %>% group_by(Accident) %>% summarize(n = n())
+```
+
+Also, when we did initial exploratory analysis, we found that many of the features didn't seem to effectively predict for Accident, which was corroborated by the number of insignificant p-values found in the full logistic model. It is possible that the information contained in the dataset didn't allow for particularly effective classification models in the first place. 
+
+Other limitations of this analysis include the number of missing values that had to be imputed, with over half of the observations in the original dataset having missing values. For future analysis, these same methods may be better applied onto a different dataset with a more balanced binary response and better suited predictors to get a more accurate reflection of the performance of these models with a better dataset. 
+
+# References: 
+
+(1) https://www.kaggle.com/datasets/denkuznetz/traffic-accident-prediction
+(2) https://www.datacamp.com/blog/classification-machine-learning
+(3) https://www.geeksforgeeks.org/top-6-machine-learning-algorithms-for-classification/
+(4) https://rpubs.com/uky994/593668
+
